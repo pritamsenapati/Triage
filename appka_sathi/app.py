@@ -267,17 +267,18 @@ def finalize_risk():
     cursor = conn.cursor()
 
     cursor.execute("""
-        UPDATE triage_records
-        SET
-            final_risk_level = %s,
-            corrected_symptoms = %s,
-            decision_time = NOW()
-        WHERE referral_id = %s
-    """, (
-        final_risk,
-        ",".join(corrected_symptoms),
-        referral_id
-    ))
+    UPDATE triage_records
+    SET
+        final_risk_level = %s,
+        corrected_symptoms = %s,
+        decision_time = NOW(),
+        hospital_assigned = IFNULL(hospital_assigned, 'To be assigned')
+    WHERE referral_id = %s
+""", (
+    final_risk,
+    ",".join(corrected_symptoms),
+    referral_id
+))
 
     conn.commit()  
     cursor.close()
@@ -355,22 +356,23 @@ def triage_history():
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT
-            referral_id,
-            patient_name,
-            age,
-            bp,
-            risk_level,
-            final_risk_level,
-            hospital_assigned,
-            created_at,
-            CASE
-                WHEN final_risk_level IS NULL THEN 'Pending'
-                ELSE 'Verified'
-            END AS status
-        FROM triage_records
-        ORDER BY created_at DESC
-    """)
+    SELECT
+        referral_id,
+        patient_name,
+        age,
+        bp,
+        risk_level,
+        final_risk_level,
+        hospital_assigned,
+        created_at,
+CASE
+    WHEN final_risk_level IS NULL THEN 'Pending'
+    WHEN hospital_assigned IS NULL THEN 'Awaiting Hospital'
+    ELSE 'Completed'
+END AS status
+    FROM triage_records
+    ORDER BY created_at DESC
+""")
 
     records = cursor.fetchall()
     cursor.close()

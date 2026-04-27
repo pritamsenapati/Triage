@@ -95,10 +95,10 @@ function submitFinal() {
       override_reason: document.getElementById("reason").value
     })
   })
-  .then(() => {
-    alert("Saved permanently");
-    window.location.href = "/triage-history";
-  });
+.then(() => {
+  alert("Saved permanently");
+  location.reload();   // 🔥 this refreshes current page
+});
 }
 </script>
 
