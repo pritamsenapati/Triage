@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Doctor Validation – {{ record.referral_id }}</h2>
+<p><b>Patient:</b> {{ record.patient_name }}</p>
+<p><b>AI Risk:</b> {{ record.risk_level }}</p>
+
+<h3>Correct Symptoms</h3>
+
+<ul id="symptomList">
+  {% for s in symptoms %}
+  <li>
+    <input type="text" value="{{ s }}" class="symptom-input">
+    <button type="button" onclick="deleteSymptom(this)">Delete</button>
+  </li>
+  {% endfor %}
+</ul>
+
+<input type="text" id="newSymptom" placeholder="Add new symptom">
+<button type="button" onclick="addSymptom()">Add</button>
+
+<h3>Final Risk</h3>
+<select id="final_risk">
+  <option>Low</option>
+  <option>Moderate</option>
+  <option>Critical</option>
+</select>
+
+<br><br>
+<textarea id="reason" placeholder="Override reason (required if changed)"></textarea>
+<br><br>
+
+<button onclick="submitFinal()">Save & Finalize</button>
+
+<script>
+const referralId = "{{ record.referral_id }}";
+
+function getSymptoms() {
+  return Array.from(
+    document.querySelectorAll(".symptom-input")
+  ).map(i => i.value.trim()).filter(v => v);
+}
+
+function recalcRisk() {
+  fetch("/recalculate-risk", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      referral_id: referralId,
+      symptoms: getSymptoms()
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.risk) {
+      document.getElementById("final_risk").value = d.risk;
+    }
+  });
+}
+
+function deleteSymptom(btn) {
+  btn.parentElement.remove();
+  recalcRisk();
+}
+
+function addSymptom() {
+  const input = document.getElementById("newSymptom");
+  if (!input.value.trim()) return;
+
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <input type="text" value="${input.value}" class="symptom-input">
+    <button onclick="deleteSymptom(this)">Delete</button>
+  `;
+  document.getElementById("symptomList").appendChild(li);
+  input.value = "";
+  recalcRisk();
+}
+
+document.addEventListener("input", e => {
+  if (e.target.classList.contains("symptom-input")) {
+    recalcRisk();
+  }
+});
+
+function submitFinal() {
+  fetch("/finalize-risk", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      referral_id: referralId,
+      final_risk: document.getElementById("final_risk").value,
+      corrected_symptoms: getSymptoms(),
+      override_reason: document.getElementById("reason").value
+    })
+  })
+  .then(() => {
+    alert("Saved permanently");
+    window.location.href = "/triage-history";
+  });
+}
+</script>
+
+</body>
+</html>

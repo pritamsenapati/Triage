@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Load Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        td {
+            padding: 18px;
+            color: #333;
+        }
+
+        .hospital-name {
+            font-weight: 600;
+            font-size: 1.05em;
+            color: #333;
+        }
+
+        .beds-count {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #667eea;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .available {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+
+        .available:hover {
+            background: #4caf50;
+            color: white;
+        }
+
+        .full {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+
+        .full:hover {
+            background: #f44336;
+            color: white;
+        }
+
+        .warning {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ff9800;
+        }
+
+        .warning:hover {
+            background: #ff9800;
+            color: white;
+        }
+
+        .footer {
+            padding: 30px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .back-link:hover {
+            background: #f0f2ff;
+            transform: translateX(-5px);
+        }
+
+        .last-updated {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 12px;
+                font-size: 0.9em;
+            }
+
+            .hospital-name {
+                font-size: 0.95em;
+            }
+
+            .stat-card .number {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🏥 Hospital Load Dashboard</h1>
+        <p>Real-time bed availability across all hospitals</p>
+    </div>
+
+    <div class="content">
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <h3>Total Hospitals</h3>
+                <div class="number">{{ hospitals|length }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Beds Available</h3>
+                <div class="number" id="totalAvailable">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Full Hospitals</h3>
+                <div class="number" id="fullHospitals">-</div>
+            </div>
+        </div>
+
+  
+        <div class="table-wrapper">
+            {% if hospitals %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hospital Name</th>
+                            <th>Available Beds</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hospital in hospitals %}
+                        <tr>
+                            <td class="hospital-name">{{ hospital.name }}</td>
+                            <td class="beds-count">{{ hospital.available_beds }} beds</td>
+                            <td>
+                                {% if hospital.available_beds > 10 %}
+                                    <span class="status-badge available">✓ Beds Available</span>
+                                {% elif hospital.available_beds > 0 %}
+                                    <span class="status-badge warning">⚠ Limited Beds</span>
+                                {% else %}
+                                    <span class="status-badge full">✕ Full</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">🏥</div>
+                    <h3>No hospitals available</h3>
+                    <p>Hospital data is currently unavailable</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="{{ url_for('dashboard') }}">⬅ Back to Dashboard</a>
+        <div class="last-updated">Last updated: <span id="timestamp">Just now</span></div>
+    </div>
+</div>
+
+<script>
+    
+    function updateStats() {
+     
+        const rows = document.querySelectorAll('tbody tr');
+        if (rows.length > 0) {
+            let totalBeds = 0;
+            let fullCount = 0;
+            
+            rows.forEach(row => {
+                const bedsText = row.querySelector('.beds-count').textContent;
+                const beds = parseInt(bedsText);
+                totalBeds += beds;
+                
+                if (beds === 0) fullCount++;
+            });
+            
+            document.getElementById('totalAvailable').textContent = totalBeds;
+            document.getElementById('fullHospitals').textContent = fullCount;
+        }
+    }
+
+
+    function updateTimestamp() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        });
+        document.getElementById('timestamp').textContent = timeStr;
+    }
+
+   
+    updateStats();
+    updateTimestamp();
+    
+
+    setInterval(() => {
+        updateStats();
+        updateTimestamp();
+    }, 30000);
+</script>
+
+</body>
+</html>

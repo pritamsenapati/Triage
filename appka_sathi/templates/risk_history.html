@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Risk History Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.6s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+    }
+
+    .header h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 0.95em;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px 30px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    th {
+      padding: 18px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95em;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background: #f8f9ff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    td {
+      padding: 18px;
+      color: #333;
+    }
+
+    .risk-level-cell {
+      font-weight: 700;
+      font-size: 1.05em;
+    }
+
+    .risk-critical {
+      color: #c62828;
+      background: #ffebee;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: inline-block;
+      border-left: 4px solid #f44336;
+      font-weight: 700;
+    }
+
+    .risk-moderate {
+      color: #e65100;
+      background: #fff3e0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: inline-block;
+      border-left: 4px solid #ff9800;
+      font-weight: 700;
+    }
+
+    .risk-low {
+      color: #2e7d32;
+      background: #e8f5e9;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: inline-block;
+      border-left: 4px solid #4caf50;
+      font-weight: 700;
+    }
+
+    .cases-count {
+      font-weight: 600;
+      font-size: 1.1em;
+      color: #667eea;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 3em;
+      margin-bottom: 15px;
+    }
+
+    .footer {
+      padding: 30px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 12px 24px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .last-updated {
+      color: #999;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        border-radius: 15px;
+      }
+
+      .header h1 {
+        font-size: 1.8em;
+      }
+
+      .content {
+        padding: 25px 20px;
+      }
+
+      th, td {
+        padding: 12px;
+        font-size: 0.9em;
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .back-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>📊 Risk History Dashboard</h1>
+      <p>Patient Risk Level Distribution & Statistics</p>
+    </div>
+
+    <div class="content">
+
+      <div class="table-wrapper">
+        {% if data %}
+          <table>
+            <thead>
+              <tr>
+                <th>🚨 Risk Level</th>
+                <th>📈 Total Cases</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in data %}
+              <tr>
+                <td class="risk-level-cell">
+                  {% if row.risk_level == "Critical" %}
+                    <span class="risk-critical">{{ row.risk_level }}</span>
+                  {% elif row.risk_level == "Moderate" %}
+                    <span class="risk-moderate">{{ row.risk_level }}</span>
+                  {% else %}
+                    <span class="risk-low">{{ row.risk_level }}</span>
+                  {% endif %}
+                </td>
+                <td class="cases-count">{{ row.total_cases }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>No Data Available</h3>
+            <p>Risk history data is currently unavailable</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="footer">
+      <a href="{{ url_for('dashboard') }}" class="back-link">⬅ Back to Dashboard</a>
+    </div>
+  </div>
+
+</body>
+
+</html>

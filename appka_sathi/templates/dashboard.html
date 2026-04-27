@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sahayak-AI | Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #999;
+            font-size: 0.95em;
+        }
+
+        .welcome-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .card-header.analytics {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-header.security {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card-content {
+            padding: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(-1px);
+        }
+
+        .button.logout {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .button.logout:hover {
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .button-icon {
+            font-size: 1.1em;
+        }
+
+        .feature-list {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .feature-item:not(:last-child) {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .feature-icon {
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-icon {
+            font-size: 1.5em;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 25px 20px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .card-header {
+                padding: 20px;
+                font-size: 1.2em;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+
+            .button {
+                padding: 12px 16px;
+                font-size: 0.9em;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+       
+        <div class="header">
+            <h1>🏥 TRIAGE.AI</h1>
+            <p>Admin & Hospital Dashboard</p>
+            <div class="welcome-text">👋 Welcome to Hospital Management System</div>
+        </div>
+
+      
+        <div class="user-info">
+            <span class="user-icon">👤</span>
+            <span>Hospital Administrator Portal</span>
+        </div>
+
+        <div class="cards-grid">
+       
+            <div class="card">
+                <div class="card-header analytics">
+                    📊 Analytics & Monitoring
+                </div>
+                <div class="card-content">
+                    <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                        View comprehensive analytics and monitoring data for patient triage and risk assessment.
+                    </p>
+                    <div class="button-group">
+                        <a href="/risk-history" class="button">
+                            <span class="button-icon">📈</span>
+                            View Risk History
+                        </a>
+                        <a href="/triage-history" class="button">
+                            <span class="button-icon">📋</span>
+                            View Triage History
+                        </a>
+                        <a href="/hospital-load" class="button">
+                            <span class="button-icon">🏥</span>
+                            Hospital Load Status
+                        </a>
+                    </div>
+
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            Real-time risk assessment data
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            Patient triage records
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            Hospital bed availability
+                        </div>
+                    </div>
+
+                    <div class="stats-bar">
+                        <div class="stat">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">Monitoring</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">∞</div>
+                            <div class="stat-label">Scalable</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-header security">
+                    🔐 Session Control
+                </div>
+                <div class="card-content">
+                    <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                        Manage your session and access control settings securely.
+                    </p>
+                    <div class="button-group">
+                        <a href="{{ url_for('logout') }}" class="button logout">
+                            <span class="button-icon">🚪</span>
+                            Logout
+                        </a>
+                    </div>
+
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">🔒</span>
+                            Secure session management
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔑</span>
+                            Role-based access control
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📱</span>
+                            Multi-device support
+                        </div>
+                    </div>
+
+                    <div class="stats-bar">
+                        <div class="stat">
+                            <div class="stat-value">SSL</div>
+                            <div class="stat-label">Encrypted</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">✓</div>
+                            <div class="stat-label">Verified</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Apka-Sathi</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 0.95em;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.4em;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dashboard-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-buttons a {
+      text-decoration: none;
+    }
+
+    .dashboard-buttons button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .dashboard-buttons button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .input-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .camera-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .camera-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .camera-buttons button {
+      flex: 1;
+      min-width: 150px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .camera-buttons button:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+    }
+
+    video,
+    img {
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .symptoms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .symptom-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .symptom-label:hover {
+      border-color: #667eea;
+      background: #f0f2ff;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #667eea;
+    }
+
+    .consent-section {
+      background: #f0f2ff;
+      padding: 16px;
+      border-radius: 10px;
+      margin: 25px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .consent-section input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button.primary {
+      flex: 1;
+      min-width: 150px;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    button.primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    #consentError {
+      background: #ffe0e0;
+      color: #d32f2f;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border-left: 4px solid #d32f2f;
+    }
+
+    #result {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+      font-size: 1.2em;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    #hospitalSection {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+
+    #hospitalList {
+      list-style: none;
+    }
+
+    #hospitalList li {
+      background: white;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #hospitalList li:hover {
+      background: #f0f2ff;
+      transform: translateX(5px);
+    }
+
+    #explainBtn {
+      margin: 15px 0;
+      padding: 12px 24px;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    #explainBtn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    #explanation {
+      background: #f0f2ff;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+      list-style-position: inside;
+    }
+
+    #explanation li {
+      margin: 8px 0;
+      color: #333;
+    }
+
+    #qr {
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏥 TRIAGE.AI</h1>
+      <p>Emergency Risk Assessment & Hospital Triage System</p>
+    </div>
+
+    <div class="content">
+
+      <div class="section">
+        <h2 class="section-title">📊 Dashboards</h2>
+        <div class="dashboard-buttons">
+          <a href="/risk-history">
+            <button>📈 Risk History</button>
+          </a>
+          <a href="/triage-history">
+            <button>📋 Triage History</button>
+          </a>
+          <a href="/hospital-load">
+            <button>🏥 Hospital Load</button>
+          </a>
+          <a href="/login">
+            <button>🔐 Hospital Login</button>
+          </a>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <h2 class="section-title">👤 Patient Information</h2>
+        <div class="input-group">
+          <input type="text" id="patient_name" placeholder="Patient Name">
+         <input  type="number"  name="age"  id="age" placeholder="Age" min="0"  max="120"  required oninput="validateAge(this)">
+          <input type="number" id="bp" placeholder="Blood Pressure (e.g., 120/80)">
+        </div>
+
+
+        <div class="camera-section">
+          <h3 style="margin-bottom: 12px; color: #333;">📷 Photo Capture</h3>
+          <div class="camera-buttons">
+            <button onclick="startCamera()">Start Camera</button>
+            <button onclick="capturePhoto()">Capture Photo</button>
+          </div>
+          <video id="camera" width="200" style="display:none;" autoplay></video>
+          <img id="patientImg" width="120" style="display:none;">
+        </div>
+      </div>
+
+
+      <div class="section">
+        <h2 class="section-title">🩺 Symptoms</h2>
+        <div class="symptoms-grid">
+          <label class="symptom-label"><input type="checkbox" id="chest_pain"> Chest Pain</label>
+          <label class="symptom-label"><input type="checkbox" id="breathlessness"> Breathlessness</label>
+          <label class="symptom-label"><input type="checkbox" id="palpitations"> Irregular Heartbeat</label>
+          <label class="symptom-label"><input type="checkbox" id="cold_sweat"> Cold Sweating</label>
+          <label class="symptom-label"><input type="checkbox" id="cyanosis"> Bluish Lips / Nails</label>
+          <label class="symptom-label"><input type="checkbox" id="unconscious"> Unconscious</label>
+          <label class="symptom-label"><input type="checkbox" id="seizure"> Seizures</label>
+          <label class="symptom-label"><input type="checkbox" id="dizziness"> Dizziness / Fainting</label>
+          <label class="symptom-label"><input type="checkbox" id="headache"> Severe Headache</label>
+          <label class="symptom-label"><input type="checkbox" id="slurred_speech"> Slurred Speech</label>
+          <label class="symptom-label"><input type="checkbox" id="vision_loss"> Sudden Vision Loss</label>
+          <label class="symptom-label"><input type="checkbox" id="high_fever"> High Fever</label>
+          <label class="symptom-label"><input type="checkbox" id="persistent_fever"> Fever > 3 Days</label>
+          <label class="symptom-label"><input type="checkbox" id="vomiting"> Vomiting</label>
+          <label class="symptom-label"><input type="checkbox" id="diarrhea"> Diarrhea</label>
+          <label class="symptom-label"><input type="checkbox" id="dehydration"> Signs of Dehydration</label>
+          <label class="symptom-label"><input type="checkbox" id="bleeding"> Severe Bleeding</label>
+          <label class="symptom-label"><input type="checkbox" id="fracture"> Suspected Fracture</label>
+          <label class="symptom-label"><input type="checkbox" id="head_injury"> Head Injury</label>
+          <label class="symptom-label"><input type="checkbox" id="burns"> Burns</label>
+          <label class="symptom-label"><input type="checkbox" id="abdominal_pain"> Severe Abdominal Pain</label>
+        </div>
+      </div>
+
+
+      <div class="consent-section">
+        <input type="checkbox" id="consent">
+        <label for="consent" style="margin: 0;">I consent to automated risk assessment</label>
+      </div>
+
+
+      <div class="action-buttons">
+        <button class="primary" type="button" onclick="analyze()">Assess Risk</button>
+      </div>
+
+      <div id="consentError" style="display:none;">
+        ❌ Consent is required before assessment.
+      </div>
+
+
+      <h3 id="result" style="display:none;"></h3>
+   
+      <div id="sosSection" style="display:none; margin-top:20px;">
+        <h3>🚨 Emergency SOS</h3>
+
+        <input type="text" id="sosPhone" placeholder="Enter relative phone number">
+
+        <button onclick="sendSOS()">Send SOS Alert</button>
+
+        <p id="sosStatus" style="color:green;"></p>
+      </div>
+
+      <p id="probability"></p>
+      <div id="hospitalSection" style="display:none;">
+        <h3 class="section-title">🏥 Select Hospital</h3>
+        <ul id="hospitalList"></ul>
+      </div>
+
+      <button id="explainBtn" style="display:none;" onclick="toggleExplanation()">
+        ❓ Why is this patient critical?
+      </button>
+
+      <ul id="explanation" style="display:none;"></ul>
+
+      <img id="qr" style="display:none; width:200px; margin-top:15px;">
+      <canvas id="snapshot" width="200" height="150" style="display:none;"></canvas>
+    </div>
+  </div>
+
+  <script src="/static/js/script.js"></script>
+  <script>
+function validateAge(input) {
+  const age = Number(input.value);
+
+  if (input.value === "") return;
+
+  if (age < 0 || age > 120) {
+    alert("Please enter age between 0 to 120");
+    input.value = "";
+    input.focus();
+  }
+}
+</script>
+
+</body>
+
+</html>

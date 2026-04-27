@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Hospital Referral</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.6s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+    }
+
+    .header h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 0.95em;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px 30px;
+    }
+
+    .patient-header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 30px;
+      align-items: start;
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .patient-photo {
+      width: 180px;
+      height: 180px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .patient-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .no-photo {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 3em;
+    }
+
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .info-label {
+      font-weight: 700;
+      color: #667eea;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 1.2em;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .referral-id {
+      background: #f0f2ff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      color: #667eea;
+    }
+
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1em;
+      width: fit-content;
+    }
+
+    .risk-critical {
+      background: #ffebee;
+      color: #c62828;
+      border: 2px solid #f44336;
+    }
+
+    .risk-low {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 2px solid #4caf50;
+    }
+
+    .risk-moderate {
+      background: #fff3e0;
+      color: #e65100;
+      border: 2px solid #ff9800;
+    }
+
+    .section {
+      margin-bottom: 35px;
+    }
+
+    .section-title {
+      font-size: 1.4em;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #667eea;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .symptoms-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .symptom-item {
+      background: #f8f9fa;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .symptom-item:hover {
+      background: #f0f2ff;
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .symptom-item::before {
+      content: "•";
+      color: #667eea;
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+
+    .symptom-text {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .hospital-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .hospital-label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .hospital-name {
+      font-size: 1.6em;
+      font-weight: 700;
+    }
+
+    .empty-symptoms {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .footer {
+      padding: 20px 30px;
+      border-top: 1px solid #e0e0e0;
+      text-align: center;
+      color: #999;
+      font-size: 0.9em;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      padding: 10px 15px;
+      border-radius: 8px;
+    }
+
+    .back-link:hover {
+      background: #f0f2ff;
+      transform: translateX(-5px);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        border-radius: 15px;
+      }
+
+      .patient-header {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .patient-photo {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+      }
+
+      .header h1 {
+        font-size: 1.8em;
+      }
+
+      .section-title {
+        font-size: 1.2em;
+      }
+
+      .symptoms-list {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 25px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>👤 Patient Details</h1>
+      <p>Hospital Referral Information</p>
+    </div>
+
+    <div class="content">
+
+      <div class="patient-header">
+        <div class="patient-photo">
+          {% if photo %}
+          <img src="{{ photo }}" alt="Patient Photo">
+          {% else %}
+          <div class="no-photo">📸</div>
+          {% endif %}
+        </div>
+
+        <div class="patient-info">
+          <div class="info-row">
+            <span class="info-label">Patient Name</span>
+            <span class="info-value">{{ patient_name }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Referral ID</span>
+            <span class="referral-id">{{ referral_id }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Risk Level</span>
+            <div>
+              {% if risk == "Critical" %}
+              <span class="risk-badge risk-critical">🚨 Critical</span>
+              {% elif risk == "Moderate" %}
+              <span class="risk-badge risk-moderate">⚠️ Moderate</span>
+              {% else %}
+              <span class="risk-badge risk-low">✓ Low</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <h3 class="section-title">🩺 Reported Symptoms</h3>
+        {% if symptoms %}
+        <ul class="symptoms-list">
+          {% for s in symptoms %}
+          <li class="symptom-item">
+            <span class="symptom-text">{{ s.replace("_", " ").title() }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-symptoms">
+          <p>No symptoms reported</p>
+        </div>
+        {% endif %}
+      </div>
+  
+      <div class="section">
+        <h3 class="section-title">🧠 AI Recommendation</h3>
+
+        <p>
+          <strong>AI Risk Level:</strong>
+          <span class="risk-badge
+      {% if risk == 'Critical' %}risk-critical
+      {% elif risk == 'Moderate' %}risk-moderate
+      {% else %}risk-low{% endif %}">
+            {{ risk }}
+          </span>
+        </p>
+
+        {% if session.get("admin_logged_in") %}
+        <hr style="margin:20px 0;">
+
+        <h3 class="section-title">⚖️ Final Clinical Decision</h3>
+
+        <label><strong>Select Final Risk Level</strong></label><br><br>
+
+        <select id="finalRisk" style="padding:10px; border-radius:8px;">
+          <option value="{{ risk }}">Accept AI Recommendation</option>
+          <option value="Low">Override → Low</option>
+          <option value="Moderate">Override → Moderate</option>
+          <option value="High">Override → High</option>
+          <option value="Critical">Override → Critical</option>
+        </select>
+
+        <br><br>
+
+        <textarea id="overrideReason" placeholder="Reason for overriding AI (mandatory if overridden)" rows="3"
+          style="width:100%; padding:10px; border-radius:8px;"></textarea>
+
+        <br><br>
+
+        <button onclick="submitFinalDecision()" style="padding:12px 20px;">
+          Submit Final Decision
+        </button>
+
+        <p id="decisionStatus" style="margin-top:10px; font-weight:600;"></p>
+
+        <script>
+          function submitFinalDecision() {
+            const finalRisk = document.getElementById("finalRisk").value;
+            const reason = document.getElementById("overrideReason").value;
+
+            fetch("/finalize-risk", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                referral_id: "{{ referral_id }}",
+                final_risk: finalRisk,
+                override_reason: reason
+              })
+            })
+              .then(res => res.json())
+              .then(data => {
+                document.getElementById("decisionStatus").innerText = data.message;
+              });
+          }
+        </script>
+        {% endif %}
+      </div>
+
+
+      <div class="section">
+        <h3 class="section-title">🏥 Assigned Hospital</h3>
+        <div class="hospital-card">
+          <div class="hospital-label">Hospital Name</div>
+          <div class="hospital-name">{{ hospital }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Patient referral details as assessed by Apka-Sathi</p>
+      <a href="/" class="back-link">⬅ Back to Home</a>
+    </div>
+  </div>
+
+</body>
+
+</html>
