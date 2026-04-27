@@ -250,37 +250,32 @@ def referral_page(referral_id):
 
 @app.route("/finalize-risk", methods=["POST"])
 def finalize_risk():
-    if not session.get("admin_logged_in"):
-        return jsonify({"error": "Unauthorized"}), 401
-
-    data = request.json
+    data = request.get_json()
 
     referral_id = data.get("referral_id")
     final_risk = data.get("final_risk")
     corrected_symptoms = data.get("corrected_symptoms", [])
-    override_reason = data.get("override_reason", "").strip()
-
-    if not referral_id or not final_risk:
-        return jsonify({"error": "Invalid data"}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
-    UPDATE triage_records
-    SET
-        final_risk_level = %s,
-        corrected_symptoms = %s,
-        decision_time = NOW(),
-        hospital_assigned = IFNULL(hospital_assigned, 'To be assigned')
-    WHERE referral_id = %s
-""", (
-    final_risk,
-    ",".join(corrected_symptoms),
-    referral_id
-))
+        UPDATE triage_records
+        SET
+            final_risk_level = %s,
+            corrected_symptoms = %s,
+            decision_time = NOW()
+        WHERE referral_id = %s
+    """, (
+        final_risk,
+        ",".join(corrected_symptoms),
+        referral_id
+    ))
 
-    conn.commit()  
+    conn.commit()
+
+    print("UPDATED:", referral_id, final_risk)  # debug log
+
     cursor.close()
     conn.close()
 
@@ -365,11 +360,10 @@ def triage_history():
         final_risk_level,
         hospital_assigned,
         created_at,
-CASE
-    WHEN final_risk_level IS NULL THEN 'Pending'
-    WHEN hospital_assigned IS NULL THEN 'Awaiting Hospital'
-    ELSE 'Completed'
-END AS status
+        CASE
+            WHEN final_risk_level IS NULL OR final_risk_level = '' THEN 'Pending'
+            ELSE 'Verified'
+        END AS status
     FROM triage_records
     ORDER BY created_at DESC
 """)
